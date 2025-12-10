@@ -12,7 +12,6 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-
     const formData = new FormData(e.currentTarget as HTMLFormElement);
 
     // Gọi Server Action
