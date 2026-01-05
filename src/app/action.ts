@@ -28,8 +28,8 @@ export async function sendContactEmail(formData: FormData) {
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`, // Bản text dự phòng */
 
       from: 'onboarding@resend.dev',
-      to: 'mousefarm@career.sanogroup.tv',
-      subject: `[MouseFarm] ${interest} - ${name}`,
+      to: 'banana@career.sanogroup.tv',
+      subject: `[Banana] ${interest} - ${name}`,
       html: `<div className="">
            Tên - ${name}
           </div>`+

@@ -1,8 +1,31 @@
-import React from 'react';
+'use client';
+import React, { useRef, useState } from 'react';
 import { FaEnvelope, FaPaperPlane, FaHandshake, FaMapMarkerAlt, FaQuestionCircle } from 'react-icons/fa';
 import styles from './contact.module.scss';
+import toast from 'react-hot-toast';
+import { sendContactEmail } from '../action';
 
 export default function ContactPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Xử lý gửi form giả lập
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+
+    // Gọi Server Action
+    const result = await sendContactEmail(formData);
+
+    if (result.success) {
+      toast.success("Message sent! We'll get back to you soon. 🚀");
+      formRef.current?.reset(); // Xóa trắng form sau khi gửi
+    } else {
+      toast.error(`Failed: ${result.error}`);
+    }
+
+    setIsLoading(false);
+  };
   return (
     <main className={styles.container}>
       
@@ -48,23 +71,23 @@ export default function ContactPage() {
         <div className={styles.formCard}>
           <h2><FaPaperPlane className="text-yellow-400" /> Send a Postcard</h2>
           
-          <form>
+          <form ref={formRef} onSubmit={handleSubmit}>
             {/* Grid tên và email */}
             <div className={styles.formGrid}>
               <div className={styles.field}>
                 <label>Your Name</label>
-                <input type="text" placeholder="Adventurer Name" required />
+                <input type="text" name="name" placeholder="Adventurer Name" required />
               </div>
               <div className={styles.field}>
                 <label>Your Email</label>
-                <input type="email" placeholder="email@example.com" required />
+                <input type="email" name="email" placeholder="email@example.com" required />
               </div>
             </div>
 
             {/* Select Subject */}
             <div className={styles.field} style={{ marginBottom: '1.5rem' }}>
               <label>Topic</label>
-              <select defaultValue="">
+              <select name="interest" defaultValue="">
                 <option value="" disabled>What is this about?</option>
                 <option value="collab">Business / Collaboration</option>
                 <option value="question">Travel Question</option>
@@ -76,7 +99,7 @@ export default function ContactPage() {
             {/* Message */}
             <div className={styles.field} style={{ marginBottom: '2rem' }}>
               <label>Message</label>
-              <textarea placeholder="Tell me about your project or ask me anything..." required></textarea>
+              <textarea name="message" placeholder="Tell me about your project or ask me anything..." required></textarea>
             </div>
 
             {/* Submit Button */}
