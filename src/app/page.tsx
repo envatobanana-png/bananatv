@@ -1,13 +1,16 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaPlane, FaMapMarkerAlt, FaGlobeAmericas, FaPlay } from 'react-icons/fa';
 import styles from '@/src/styles/banana.module.scss';
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: true });
 
 // 1. Import Sanity Client & GROQ
 
 import { groq } from "next-sanity";
 import VideoUploadForm from '../components/ui/VideoUploadForm/VideoUploadForm';
+
 import { client } from '../sanity/lib/client';
 
 // 2. Định nghĩa kiểu dữ liệu (Interface)
@@ -42,7 +45,7 @@ export const revalidate = 60;
 
 // Danh mục tĩnh (Có thể lấy động nếu muốn)
 const categories = ['All', 'Mountains', 'Rivers', 'Cities', 'Forests', 'Ancient Towns'];
-
+const YOUTUBE_ID = "fwFp06CWkdU";
 export default async function BananaHomePage() {
   // 4. Gọi hàm lấy dữ liệu
   const travelVideos = await getTravelVideos();
@@ -52,29 +55,55 @@ export default async function BananaHomePage() {
       
       {/* --- 1. HERO SECTION --- */}
       <section className={styles.heroSection}>
-        <video 
-          autoPlay loop muted playsInline 
-          className={styles.videoBackground}
-          poster="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2000"
-        >
-          {/* Bạn nhớ thay link video nền phù hợp */}
-          <source src="https://cdn.pixabay.com/video/2020/05/25/40149-424076356_large.mp4" type="video/mp4" />
-        </video>
+        
+        {/* Wrapper cho Youtube */}
+        <div className={styles.videoBackground}>
+        <ReactPlayer
+          src={`https://www.youtube.com/watch?v=${YOUTUBE_ID}`}
+          playing={true}     // Tự động chạy
+          loop={true}        // Lặp lại
+          muted={true}       // Tắt tiếng (Bắt buộc để autoplay)
+          width="100%"
+          height="100%"
+          controls={false}   // Ẩn điều khiển
+          config={{
+            youtube: {
+              showinfo: 0,
+              modestbranding: 1,
+              controls: 0,
+              rel: 0, // Không gợi ý video kênh khác
+              disablekb: 1, // Tắt phím tắt
+              iv_load_policy: 3 // Tắt chú thích
+            } as any
+          }}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) scale(1.5)', // Scale to lên để che 2 viền đen nếu có
+            pointerEvents: 'none' // Không cho user bấm vào video nền
+          }}
+        />
+      </div>
 
+        {/* Lớp phủ tối (Optional) */}
+        <div className={styles.overlay}></div>
+
+        {/* Nội dung chính */}
         <div className={styles.heroContent}>
           <h1>
             BANANA <span>PLANET</span>
           </h1>
           <p>
             The Planet of Amazing Discoveries. <br/>
-            Khám phá những kỳ quan thiên nhiên ẩn giấu đẹp nhất thế giới.
+            Discover the world's most beautiful hidden natural wonders.
           </p>
           <Link href="/video" className={styles.exploreBtn}>
             <FaPlane /> Start Journey
           </Link>
         </div>
       </section>
-
+      
       {/* --- 2. CATEGORY FILTER --- */}
      {/*  <div className={styles.categoryScroll}>
         {categories.map((cat, idx) => (
