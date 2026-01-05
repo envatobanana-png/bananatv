@@ -1,116 +1,93 @@
-'use client';
-
-import React, { useState, useRef } from 'react';
+import React from 'react';
+import { FaEnvelope, FaPaperPlane, FaHandshake, FaMapMarkerAlt, FaQuestionCircle } from 'react-icons/fa';
 import styles from './contact.module.scss';
-import toast from 'react-hot-toast'; // Dùng lại toast đã cài
-import { sendContactEmail } from '../action';
 
 export default function ContactPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-  // Xử lý gửi form giả lập
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-
-    // Gọi Server Action
-    const result = await sendContactEmail(formData);
-
-    if (result.success) {
-      toast.success("Message sent! We'll get back to you soon. 🚀");
-      formRef.current?.reset(); // Xóa trắng form sau khi gửi
-    } else {
-      toast.error(`Failed: ${result.error}`);
-    }
-
-    setIsLoading(false);
-  };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.wrapper}>
+    <main className={styles.container}>
+      
+      <header className={styles.header}>
+        <h1>Get In <span>Touch</span></h1>
+        <p>Got a question about a destination? Want to collaborate on a video? Or just want to say hi? Drop me a line below!</p>
+      </header>
 
-        {/* --- CỘT TRÁI: THÔNG TIN --- */}
+      <div className={styles.contentWrapper}>
+        
+        {/* --- LEFT SIDE: INFO --- */}
         <div className={styles.infoColumn}>
-          <h1 className={styles.heading}>
-            Let's <br />
-            <span>Work Together</span>
-          </h1>
           
-          <div className=""></div>
-          <div className=""></div>
-          <p className={styles.description}>
-            Interested in partnering with Mouse Farm? We are always looking for strategic partnership opportunities for Advertising, Sponsorship or Content Licensing.
-          </p>
-
-          {/* Số liệu kênh (Hard-code hoặc lấy từ API) */}
-          <div className={styles.statsGrid}>
-            <div className={styles.statItem}>
-              <h4>1.2M+</h4>
-              <p>Subscribers</p>
-            </div>
-            <div className={styles.statItem}>
-              <h4>500M+</h4>
-              <p>Total Views</p>
-            </div>
-            <div className={styles.statItem}>
-              <h4>USA</h4>
-              <p>Top Audience</p>
-            </div>
-            <div className={styles.statItem}>
-              <h4>2016</h4>
-              <p>Established</p>
-            </div>
+          {/* Card 1: Business */}
+          <div className={styles.infoCard}>
+            <FaHandshake className={styles.icon} />
+            <h3>Business & Collabs</h3>
+            <p>For sponsorships and partnership inquiries:</p>
+            <a href="mailto:booking@bananaplanet.tv" className={styles.link}>booking@bananaplanet.tv</a>
           </div>
 
-          <div className={styles.contactDetails}>
-            <h5>Direct Contact</h5>
-            <a href="mailto:booking@mousefarm.com">booking@mousefarm.com</a>
-            <a href="https://youtube.com/@mousefarm" target="_blank" style={{ fontSize: '1rem', marginTop: '1rem' }}>
-              youtube.com/@mousefarm
-            </a>
+          {/* Card 2: General */}
+          <div className={styles.infoCard}>
+            <FaQuestionCircle className={styles.icon} />
+            <h3>General Questions</h3>
+            <p>For travel tips or just to chat:</p>
+            <a href="mailto:hello@bananaplanet.tv" className={styles.link}>hello@bananaplanet.tv</a>
           </div>
+
+          {/* Card 3: Location (Optional) */}
+          <div className={styles.infoCard}>
+            <FaMapMarkerAlt className={styles.icon} />
+            <h3>Current Location</h3>
+            <p>I'm currently exploring:</p>
+            <span className="text-yellow-400 font-bold text-lg uppercase tracking-wider">
+              📍 Northern Vietnam
+            </span>
+          </div>
+
         </div>
 
-        {/* --- CỘT PHẢI: FORM --- */}
-        <div className={styles.formColumn}>
-          <form ref={formRef} onSubmit={handleSubmit}>
+        {/* --- RIGHT SIDE: FORM --- */}
+        <div className={styles.formCard}>
+          <h2><FaPaperPlane className="text-yellow-400" /> Send a Postcard</h2>
+          
+          <form>
+            {/* Grid tên và email */}
+            <div className={styles.formGrid}>
+              <div className={styles.field}>
+                <label>Your Name</label>
+                <input type="text" placeholder="Adventurer Name" required />
+              </div>
+              <div className={styles.field}>
+                <label>Your Email</label>
+                <input type="email" placeholder="email@example.com" required />
+              </div>
+            </div>
 
-            <div className={styles.formGroup}>
-              <label>What are you interested in?</label>
-              {/* Thêm name="interest" để lấy dữ liệu */}
-              <select name="interest" defaultValue="Sponsorship">
-                <option value="Sponsorship">Sponsorship / Advertising</option>
-                <option value="Licensing">Content Licensing</option>
-                <option value="Other">Other Inquiry</option>
+            {/* Select Subject */}
+            <div className={styles.field} style={{ marginBottom: '1.5rem' }}>
+              <label>Topic</label>
+              <select defaultValue="">
+                <option value="" disabled>What is this about?</option>
+                <option value="collab">Business / Collaboration</option>
+                <option value="question">Travel Question</option>
+                <option value="feedback">Feedback</option>
+                <option value="other">Just saying Hi!</option>
               </select>
             </div>
 
-            <div className={styles.formGroup}>
-              <label>Your Name</label>
-              {/* Thêm name="name" */}
-              <input type="text" name="name" placeholder="John Doe" required />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Email Address</label>
-              {/* Thêm name="email" */}
-              <input type="email" name="email" placeholder="john@company.com" required />
-            </div>
-
-            <div className={styles.formGroup}>
+            {/* Message */}
+            <div className={styles.field} style={{ marginBottom: '2rem' }}>
               <label>Message</label>
-              {/* Thêm name="message" */}
-              <textarea name="message" placeholder="Tell us about your project..." required></textarea>
+              <textarea placeholder="Tell me about your project or ask me anything..." required></textarea>
             </div>
 
-            <button type="submit" className={styles.submitBtn} disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send Message'}
+            {/* Submit Button */}
+            <button type="submit" className={styles.submitBtn}>
+              Send Message <FaPaperPlane />
             </button>
+
           </form>
         </div>
+
       </div>
-    </div>
+    </main>
   );
 }

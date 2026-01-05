@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaCloudUploadAlt, FaSpinner, FaPaperPlane, FaCheckCircle, FaYoutube } from 'react-icons/fa';
+import { FaCloudUploadAlt, FaSpinner, FaPaperPlane, FaCheckCircle, FaYoutube, FaMountain, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 // Import SCSS Module
@@ -30,7 +30,7 @@ export default function VideoUploadForm() {
       
       if (videoId) {
         setFormData({ ...formData, bunnyVideoId: videoId, youtubeUrl: '' }); // Xóa youtube nếu có
-        toast.success('Upload thành công!');
+        toast.success('Upload successful!');
       }
     }
   };
@@ -40,8 +40,8 @@ export default function VideoUploadForm() {
     e.preventDefault();
     
     // Validate
-    if (activeTab === 'upload' && !formData.bunnyVideoId) return toast.error("Vui lòng upload video!");
-    if (activeTab === 'youtube' && !formData.youtubeUrl) return toast.error("Vui lòng dán link YouTube!");
+    if (activeTab === 'upload' && !formData.bunnyVideoId) return toast.error("Please upload the video!");
+    if (activeTab === 'youtube' && !formData.youtubeUrl) return toast.error("Please upload the video!");
 
     const toastId = toast.loading("Sending...");
 
@@ -54,12 +54,12 @@ export default function VideoUploadForm() {
 
       if (!res.ok) throw new Error('Failed');
 
-      toast.success("Gửi thành công!", { id: toastId });
+      toast.success("Sent successfully!", { id: toastId });
       // Reset form
       setFormData({ title: '', description: '', bunnyVideoId: '', youtubeUrl: '', authorName: '', authorEmail: '' });
 
     } catch (error) {
-      toast.error("Lỗi gửi form.", { id: toastId });
+      toast.error("Submission error!", { id: toastId });
     }
   };
 
@@ -67,34 +67,33 @@ export default function VideoUploadForm() {
     <div className={styles.container}>
       
       <div className={styles.header}>
-        <h2>Submit Your <span>Footage</span></h2>
-        <p>Chia sẻ video săn bắn ấn tượng của bạn.</p>
+        <h2>Share Your <span>Discovery</span></h2>
+        <p>Send your stunning 4K footage to Banana Planet.</p>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         
-        {/* --- TABS CHUYỂN ĐỔI --- */}
+        {/* --- TABS VIÊN THUỐC --- */}
         <div className={styles.tabs}>
           <button
             type="button"
             onClick={() => setActiveTab('upload')}
-            className={`${styles.tabBtn} ${activeTab === 'upload' ? styles.active : styles.inactive}`}
+            className={`${styles.tabBtn} ${activeTab === 'upload' ? styles.active : ''}`}
           >
-            <FaCloudUploadAlt /> Upload File
+            <FaMountain /> Upload 4K File
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('youtube')}
-            className={`${styles.tabBtn} ${activeTab === 'youtube' ? styles.youtubeActive : styles.inactive}`}
+            className={`${styles.tabBtn} ${activeTab === 'youtube' ? styles.youtubeActive : ''}`}
           >
             <FaYoutube /> YouTube Link
           </button>
         </div>
 
-        {/* --- KHU VỰC NHẬP VIDEO --- */}
+        {/* --- KHU VỰC UPLOAD (Cửa sổ thiên nhiên) --- */}
         <div className={styles.uploadArea}>
            {activeTab === 'upload' ? (
-             // Giao diện Upload
              <>
                <input 
                  type="file" accept="video/*" onChange={handleFileChange} 
@@ -102,37 +101,41 @@ export default function VideoUploadForm() {
                />
                
                {uploading ? (
+                 // Trạng thái Loading Xanh lá
                  <div className={styles.loadingState}>
                    <FaSpinner className={styles.spinner} />
-                   <span>Uploading {progress}%...</span>
+                   <span>Uploading to Cloud... {progress}%</span>
                    <div className={styles.progressContainer}>
                       <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
                    </div>
                  </div>
                ) : formData.bunnyVideoId ? (
+                 // Trạng thái Success
                  <div className={styles.successState}>
                     <FaCheckCircle className={styles.checkIcon} />
-                    <p className={styles.successText}>Video Uploaded!</p>
+                    <p className={styles.successText}>Ready for Adventure!</p>
                     <p className={styles.fileName}>ID: {formData.bunnyVideoId}</p>
                     <button type="button" onClick={() => setFormData({ ...formData, bunnyVideoId: '' })} className={styles.deleteBtn}>
-                       Xóa / Upload lại
+                       <FaTimes /> Remove File
                     </button>
                  </div>
                ) : (
+                 // Trạng thái mặc định
                  <div className={styles.defaultState}>
-                   <FaCloudUploadAlt className={styles.icon} />
-                   <h3 className={styles.ctaText}>Drag & Drop Video</h3>
-                   <p className={styles.subText}>Max 1GB</p>
+                   {/* Dùng icon Núi cho hợp theme */}
+                   <FaMountain className={styles.icon} /> 
+                   <h3 className={styles.ctaText}>Drop Your Footage Here</h3>
+                   <p className={styles.subText}>Supports up to 4K quality (Max 1GB)</p>
                  </div>
                )}
              </>
            ) : (
              // Giao diện nhập Youtube
              <div className={styles.youtubeInputWrapper}>
-                <FaYoutube className={styles.ytIcon} />
+                {/* <FaYoutube className={styles.ytIcon} /> */}
                 <input 
                   type="text" 
-                  placeholder="https://www.youtube.com/watch?v=..." 
+                  placeholder="Paste YouTube Link here..." 
                   value={formData.youtubeUrl}
                   onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value, bunnyVideoId: '' })}
                 />
@@ -140,37 +143,35 @@ export default function VideoUploadForm() {
            )}
         </div>
 
-        {/* --- CÁC Ô NHẬP LIỆU KHÁC --- */}
+        {/* --- CÁC Ô NHẬP LIỆU (Bo tròn) --- */}
         <div className={styles.grid}>
           <div className={styles.field}>
-            <label>Video Title</label>
+            <label>Adventure Title</label>
             <input 
-              type="text" required
+              type="text" required placeholder="E.g., Hiking the Alps..."
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
             />
           </div>
           <div className={styles.field}>
-            <label>Your Name</label>
+            <label>Explorer Name</label>
             <input 
-              type="text" required
+              type="text" required placeholder="Your Name"
               value={formData.authorName}
               onChange={(e) => setFormData({...formData, authorName: e.target.value})}
             />
           </div>
         </div>
 
-        {/* Email Field */}
         <div className={styles.field}>
-           <label>Your Email</label>
+           <label>Contact Email</label>
            <input 
-             type="email" required
+             type="email" required placeholder="email@example.com"
              value={formData.authorEmail}
              onChange={(e) => setFormData({...formData, authorEmail: e.target.value})}
-             placeholder="john@example.com"
            />
         </div>
-            <div className={styles.field}>
+        <div className={styles.field}>
           <label>Description</label>
           <textarea
             rows={3}
@@ -179,8 +180,12 @@ export default function VideoUploadForm() {
             placeholder="Tell us about the context..."
           />
         </div>
-        <button type="submit" className={styles.submitBtn}>
-          <FaPaperPlane /> SEND FOOTAGE
+        {/* Description Field (Optional - nếu bạn muốn thêm) */}
+        {/* <div className={styles.field}><label>Description</label><textarea ... /></div> */}
+
+        {/* Nút Submit Vàng rực */}
+        <button type="submit" className={styles.submitBtn} disabled={uploading}>
+          <FaPaperPlane /> SHARE ADVENTURE
         </button>
 
       </form>

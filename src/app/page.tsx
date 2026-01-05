@@ -1,219 +1,140 @@
-import Link from "next/link";
-import { FaCloudUploadAlt } from "react-icons/fa";
-// Import file style module
-import styles from './home.module.scss';
-import { client } from "../sanity/lib/client";
-import VideoCard from "../components/video/VideoCard";
-import ContactPage from "./contact/page";
-import SubmitVideo from "../components/ui/SubmitVideo/SubmitVideo";
-import VideoUploadForm from "../components/ui/VideoUploadForm/VideoUploadForm";
-import dynamic from 'next/dynamic';
-import HeroSearch from "../components/ui/Home/HeroSearch";
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: true });
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { FaPlane, FaMapMarkerAlt, FaGlobeAmericas, FaPlay } from 'react-icons/fa';
+import styles from '@/src/styles/banana.module.scss';
 
+// 1. Import Sanity Client & GROQ
 
-// --- DATA FETCHING ---
-async function getAllCategories() {
-  const query = `*[_type == "archiveVideo" && defined(category)].category`;
-  const categories = await client.fetch(query, {}, { cache: 'no-store' });
-  const uniqueCategories = [...new Set(categories)].filter(Boolean) as string[];
-  return uniqueCategories.sort();
+import { groq } from "next-sanity";
+import VideoUploadForm from '../components/ui/VideoUploadForm/VideoUploadForm';
+import { client } from '../sanity/lib/client';
+
+// 2. Định nghĩa kiểu dữ liệu (Interface)
+interface TravelVideo {
+  _id: string;
+  title: string;
+  slug: string;
+  thumbnail: string;
+  location?: string;
+  views?: number; // Nếu chưa có field này trong Sanity thì có thể mock
+  category?: string;
 }
 
-async function getVideosByCategory(category: string) {
-  const query = `*[_type == "archiveVideo" && category == "${category}"] | order(recordedAt desc) [0...4] {
-    _id, title, slug, category, thumbnail, recordedAt,
-    "videoUrl": videoFile.asset->url
+// 3. Hàm lấy dữ liệu (Server-side)
+async function getTravelVideos(): Promise<TravelVideo[]> {
+  const query = groq`*[_type == "archiveVideo"] | order(publishedAt desc)[0...9] {
+    _id,
+    title,
+    "slug": slug.current,
+    "thumbnail": thumbnail.asset->url,
+    location, 
+    "category": category->title, // Nếu category là reference
+    views 
   }`;
-  try { return await client.fetch(query, {}, { cache: 'no-store' }); } catch (error) { return []; }
+  
+  // Dùng { cache: 'no-store' } nếu muốn real-time, hoặc revalidate ở dưới
+  return await client.fetch(query);
 }
 
-async function getLatestVideos() {
-  const query = `*[_type == "archiveVideo"] | order(recordedAt desc) [0...8] {
-    _id, title, slug, category, thumbnail, recordedAt,
-    "videoUrl": videoFile.asset->url
-  }`;
-  try { return await client.fetch(query, {}, { cache: 'no-store' }); } catch (error) { return []; }
-}
+// Cấu hình Revalidate (ISR): Cập nhật data mỗi 60 giây
+export const revalidate = 60;
 
-// --- COMPONENTS ---
+// Danh mục tĩnh (Có thể lấy động nếu muốn)
+const categories = ['All', 'Mountains', 'Rivers', 'Cities', 'Forests', 'Ancient Towns'];
 
-// 1. Hero Section
-const HeroSection = ({ heroVideo }: { heroVideo: any }) => {
-  const VIDEO_ID = "cbQvj9Ug-7Y"
+export default async function BananaHomePage() {
+  // 4. Gọi hàm lấy dữ liệu
+  const travelVideos = await getTravelVideos();
 
   return (
-    <section className={styles.heroSection}>
-      <div className={styles.videoBackground}>
-        <ReactPlayer
-          src={`https://www.youtube.com/watch?v=${VIDEO_ID}`}
-          playing={true}     // Tự động chạy
-          loop={true}        // Lặp lại
-          muted={true}       // Tắt tiếng (Bắt buộc để autoplay)
-          width="100%"
-          height="100%"
-          controls={false}   // Ẩn điều khiển
-          config={{
-            youtube: {
-              showinfo: 0,
-              modestbranding: 1,
-              controls: 0,
-              rel: 0, // Không gợi ý video kênh khác
-              disablekb: 1, // Tắt phím tắt
-              iv_load_policy: 3 // Tắt chú thích
-            } as any
-          }}
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%) scale(1.5)', // Scale to lên để che 2 viền đen nếu có
-            pointerEvents: 'none' // Không cho user bấm vào video nền
-          }}
-        />
-      </div>
+    <main className={styles.mainContainer}>
+      
+      {/* --- 1. HERO SECTION --- */}
+      <section className={styles.heroSection}>
+        <video 
+          autoPlay loop muted playsInline 
+          className={styles.videoBackground}
+          poster="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2000"
+        >
+          {/* Bạn nhớ thay link video nền phù hợp */}
+          <source src="https://cdn.pixabay.com/video/2020/05/25/40149-424076356_large.mp4" type="video/mp4" />
+        </video>
 
-      <div className={styles.overlay}></div>
-
-      <div className={styles.heroContent}>
-        <h1>
-          MOUSE FARM <span>ARCHIVE</span>
-        </h1>
-        <p>
-          The definitive collection of thermal hunting, pest control, and high-precision field operations.
-        </p>
-        <HeroSearch />
-
-        {/* {heroVideo && (
-          <Link href={`/video/${heroVideo.slug.current}`} className={styles.ctaButton}>
-            Xem Video Mới Nhất
+        <div className={styles.heroContent}>
+          <h1>
+            BANANA <span>PLANET</span>
+          </h1>
+          <p>
+            The Planet of Amazing Discoveries. <br/>
+            Khám phá những kỳ quan thiên nhiên ẩn giấu đẹp nhất thế giới.
+          </p>
+          <Link href="/video" className={styles.exploreBtn}>
+            <FaPlane /> Start Journey
           </Link>
-        )} */}
-      </div>
-    </section>
-  );
-}
-// 2. Submit CTA
-const SubmitCTA = () => (
-  <section className={styles.submitBar}>
-    <div className={styles.container}>
-      <FaCloudUploadAlt className={styles.icon} />
-      <h2>Bạn có video "chất"?</h2>
-      <p>Gửi ngay cho chúng tôi để xuất hiện trên trang chủ.</p>
-      <Link href="/submit" className={styles.submitBtn}>
-        Gửi Video Ngay
-      </Link>
-    </div>
-  </section>
-);
+        </div>
+      </section>
 
-// 3. Dynamic Section (Tái sử dụng cho cả Latest và Categories)
-const SectionGrid = ({ title, videos, linkUrl }: { title: string, videos: any[], linkUrl: string }) => {
-  if (!videos || videos.length === 0) return null;
-
-  return (
-    <section className={styles.section}>
-      <div className={styles.header}>
-        <h3>{title}</h3>
-        <Link href={linkUrl} className={styles.viewAll}>
-          View All
-        </Link>
-      </div>
-      <div className={styles.grid}>
-        {videos.map((video: any) => (
-          <VideoCard key={video._id} video={video} />
+      {/* --- 2. CATEGORY FILTER --- */}
+     {/*  <div className={styles.categoryScroll}>
+        {categories.map((cat, idx) => (
+            <span key={cat} className={`${styles.pill} ${idx === 0 ? styles.active : ''}`}>
+                {cat}
+            </span>
         ))}
-      </div>
-    </section>
-  );
-};
+      </div> */}
 
-// 4. Wrapper cho Category Động
-const DynamicCategorySection = async ({ category }: { category: string }) => {
-  const videos = await getVideosByCategory(category);
-  // Format tên đẹp (viết hoa chữ đầu)
-  const displayTitle = category.charAt(0).toUpperCase() + category.slice(1);
-  return <SectionGrid title={displayTitle} videos={videos} linkUrl={`/category/${category}`} />;
-};
+      {/* --- 3. TRAVEL GRID (DỮ LIỆU TỪ SANITY) --- */}
+      <section className={styles.grid}>
+        {travelVideos.length > 0 ? (
+          travelVideos.map((video) => (
+            <Link href={`/video/${video.slug}`} key={video._id} className={styles.travelCard}>
+              
+              <div className={styles.thumbBox}>
+                {/* Check xem có ảnh không, nếu không thì hiện ảnh fallback */}
+                {video.thumbnail ? (
+                  <Image 
+                    src={video.thumbnail} 
+                    alt={video.title} 
+                    fill 
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500">
+                    <FaPlay className="text-4xl opacity-50"/>
+                  </div>
+                )}
+                
+                {/* Badge địa điểm (Lấy từ Sanity hoặc mặc định Earth) */}
+                {/* <div className={styles.locationBadge}>
+                  <FaMapMarkerAlt /> {video.location || 'China'}
+                </div> */}
+              </div>
+              
+              <div className={styles.content}>
+                <h3>{video.title}</h3>
+                <div className={styles.meta}>
+                  <span className="flex items-center gap-1">
+                    <FaGlobeAmericas/> {video.category || 'Travel Guide'}
+                  </span>
+                  
+                  {/* Nếu Sanity chưa có views, random tạm số cho đẹp */}
+                  <span>{video.views || Math.floor(Math.random() * 50) + 1}K Views</span>
+                </div>
+              </div>
 
-const WelcomeSection = () => {
-  return (
-    <section className={styles.welcomeSection}>
-      <div className={styles.welcomeContainer}>
-
-        {/* CỘT TRÁI: ẢNH MINH HỌA */}
-        <div className={styles.imageWrapper}>
-          {/* Thay src bằng ảnh thật của bạn */}
-          <img
-            src="https://images.unsplash.com/photo-1516724562728-afc824a36e84?q=80&w=2071&auto=format&fit=crop"
-            alt="Filming crew"
-          />
-        </div>
-
-        {/* CỘT PHẢI: NỘI DUNG */}
-        <div className={styles.textContent}>
-
-          {/* Khối 1: WELCOME */}
-          <div className="mb-10">
-            <h2>Welcome</h2>
-            <p>
-              Mouse Farm Archive is the definitive source for high-quality hunting and pest control footage.
-              Our library features thousands of clips ranging from thermal night vision hunts to helicopter operations.
-              We capture the raw intensity of agricultural protection.
-            </p>
-          </div>
-
-          {/* Khối 2: LICENSING */}
-          <div className={styles.licensingBlock}>
-            <h2>Licensing</h2>
-            <p>
-              We specialize in licensing and clearance of top-tier hunting content.
-              We have established relationships with brands, television studios, and news outlets to provide top-quality video for your projects.
-              <br /><br />
-              Browse for free or create an account for VIP Access to our library.
-            </p>
-
-            {/* Nút Liên Hệ */}
-            <Link href="/contact" className={styles.ctaButton}>
-              Contact Us
             </Link>
+          ))
+        ) : (
+          // Empty State nếu chưa có video nào
+          <div className="col-span-full text-center py-20">
+            <h3 className="text-2xl font-bold text-white mb-2">Chưa có chuyến đi nào! 🍌</h3>
+            <p className="text-slate-400">Hãy upload video đầu tiên từ trang quản trị.</p>
           </div>
-
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default async function Home() {
-  const latestVideos = await getLatestVideos();
-  const categories = await getAllCategories();
-  const heroVideo = latestVideos[0];
-
-  return (
-    <main className={styles.main}>
-
-      {/* Hero */}
-      <HeroSection heroVideo={heroVideo} />
-
-      <WelcomeSection />
-
-      {/* Submit Bar */}
-      {/* <SubmitCTA /> */}
+        )}
+      </section>
       <VideoUploadForm />
-      {/*   <section className="py-20 px-6 bg-zinc-950 border-y border-zinc-900">
-      </section> */}
-      {/* <div className={styles.container}> */}
-
-      {/* Latest Videos */}
-      {/* <SectionGrid title="Video Mới Nhất" videos={latestVideos} linkUrl="/category/latest" /> */}
-
-      {/* Dynamic Categories */}
-      {/* {categories.map((cat) => (
-          <DynamicCategorySection key={cat} category={cat} />
-        ))} */}
-
-      {/* </div> */}
     </main>
   );
 }

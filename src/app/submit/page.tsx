@@ -6,8 +6,8 @@ import styles from './submit.module.scss';
 import VideoUploadForm from '@/src/components/ui/VideoUploadForm/VideoUploadForm';
 
 export const metadata: Metadata = {
-  title: "Submit Video | Mouse Farm Archive",
-  description: "Send us your best hunting moments.",
+  title: "Submit Video | Banana Planet",
+  description: "Submit your travel footage to Banana Planet and get featured!",
 };
 
 export default function SubmitPage() {

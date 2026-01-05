@@ -85,10 +85,10 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ sl
                     <div className={styles.metaBar}>
 
                         <div className={styles.channelInfo}>
-                            <div className={styles.avatar}>M</div>
+                            <div className={styles.avatar}>B</div>
                             <div>
                                 <div className={styles.channelName}>
-                                    Mouse Farm Archive
+                                    Banana Planet TV
                                     <CheckCircle size={14} color="#606060" fill="transparent" />
                                 </div>
                                 <p className={styles.subText}>Official Source • Protected</p>

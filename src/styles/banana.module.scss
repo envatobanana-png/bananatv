@@ -1,0 +1,212 @@
+/* src/styles/banana.module.scss */
+
+// --- BẢNG MÀU THIÊN NHIÊN ---
+$bg-nature: #0f172a;      // Slate-900 (Màu đá trầm) hoặc #022c22 (Xanh rừng sâu)
+$bg-card: #1e293b;        // Slate-800
+$accent-banana: #facc15;  // Yellow-400 (Vàng chuối sáng)
+$accent-leaf: #4ade80;    // Green-400 (Xanh lá)
+$text-light: #f1f5f9;     // Slate-100
+$text-dim: #94a3b8;       // Slate-400
+
+// --- FONT ---
+// Dùng font tròn trịa, thân thiện như 'Nunito' hoặc 'Quicksand'
+$font-adventure: 'Nunito', sans-serif;
+
+// --- MIXINS ---
+@mixin nature-card {
+  background: rgba(30, 41, 59, 0.7); // Bán trong suốt
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px; // Bo góc tròn hơn (Organic)
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mainContainer {
+  background-color: $bg-nature;
+  color: $text-light;
+  min-height: 100vh;
+  font-family: $font-adventure;
+  
+  // Họa tiết nền bản đồ địa hình (Topography Pattern) mờ
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg"); // Hoặc dùng ảnh pattern topo
+  background-blend-mode: overlay;
+}
+
+// --- 1. HERO SECTION (Phiêu lưu) ---
+.heroSection {
+  position: relative;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  .videoBackground {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7); // Sáng hơn Space một chút
+  }
+
+  .heroContent {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 1000px;
+    padding: 0 20px;
+
+    // Logo Text cách điệu
+    h1 {
+      font-size: 5rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      color: white;
+      text-shadow: 2px 2px 0px $bg-nature;
+      
+      span {
+        color: $accent-banana;
+        display: inline-block;
+        transform: rotate(-3deg); // Nghiêng nhẹ tinh nghịch
+        background: rgba(0,0,0,0.2);
+        padding: 0 10px;
+        border-radius: 8px;
+      }
+    }
+
+    p {
+      font-size: 1.25rem;
+      color: $text-light;
+      font-weight: 600;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .exploreBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 48px;
+      background: $accent-banana;
+      color: $bg-nature; // Chữ màu tối trên nền vàng
+      font-weight: 800;
+      font-size: 1.1rem;
+      border-radius: 50px; // Nút tròn
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 20px rgba($accent-banana, 0.4);
+      border: none;
+
+      &:hover {
+        transform: scale(1.05);
+        background: white;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+// --- 2. CATEGORY PILLS (Viên thuốc danh mục) ---
+.categoryScroll {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem;
+  overflow-x: auto;
+  justify-content: center;
+  background: rgba(0,0,0,0.2);
+
+  .pill {
+    padding: 10px 24px;
+    background: $bg-card;
+    color: $text-dim;
+    border-radius: 100px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    cursor: pointer;
+
+    &:hover, &.active {
+      background: $accent-banana;
+      color: $bg-nature;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// --- 3. VIDEO CARD (Dạng Card du lịch) ---
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+  padding: 4rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.travelCard {
+  @include nature-card;
+  overflow: hidden;
+  position: relative;
+  group: hover; // Enable group hover logic
+
+  .thumbBox {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 12px; // Có lề bên trong card
+
+    img {
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    // Badge vị trí (Location)
+    .locationBadge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $accent-banana;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: $accent-banana;
+    
+    img { transform: scale(1.1); }
+  }
+
+  .content {
+    padding: 0 1.5rem 1.5rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: $text-dim;
+      font-weight: 600;
+    }
+  }
+}

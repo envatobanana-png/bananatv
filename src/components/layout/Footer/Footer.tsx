@@ -20,9 +20,9 @@ export default function Footer() {
 
           {/* Logo */}
           <Link href="/" className={styles.logo}>
-            <img src="logo.png" alt="logo" />
+            {/* <img src="logo.png" alt="logo" /> */}
             <h1>
-              MOUSE<br /><span>FARM</span>
+              <span>BANANA</span>
             </h1>
           </Link>
 
@@ -53,8 +53,7 @@ export default function Footer() {
 
         {/* --- BOTTOM SECTION --- */}
         <div className={styles.bottomSection}>
-          <p>© 2024 Mouse Farm. All rights reserved.</p>
-          <p>Designed by Sano Media</p>
+          <p>© 2025 Banana. All rights reserved.</p>
         </div>
 
       </div>

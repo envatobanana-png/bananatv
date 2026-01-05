@@ -6,7 +6,7 @@ $text-white: #ffffff;
 $text-muted: #a1a1aa; // zinc-400
 $text-dark: #52525b; // zinc-600
 $border-color: #18181b; // zinc-900
-$accent-color: #3bbbf5; // orange-600
+$accent-color: #facc15; // orange-600
 
 .footer {
   background-color: $bg-color;
@@ -70,7 +70,7 @@ $accent-color: #3bbbf5; // orange-600
   }
 
   &:hover h1 span {
-    color: #3bbbf5;
+    color: #facc15;
   }
 }
 

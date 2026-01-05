@@ -1,18 +1,9 @@
-import { apiVersion, dataset, projectId } from '@/src/sanity/env';
-import { createClient } from 'next-sanity';
 
-import { NextResponse } from 'next/server';
+import { apiVersion, dataset, projectId } from "@/src/sanity/env";
+import { createClient } from "next-sanity";
+import { NextResponse } from "next/server";
 
-// Tạo client riêng có quyền GHI (Write)
-/* const writeClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  token: process.env.SANITY_API_TOKEN, // Lấy token từ biến môi trường
-  useCdn: false, // Không cache khi ghi
-});
- */
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   const writeClient = createClient({
   projectId,
   dataset,
@@ -21,29 +12,46 @@ export async function POST(request: Request) {
   useCdn: false, // Không cache khi ghi
 });
   try {
-    const body = await request.json();
-    const { title, description, youtubeUrl,bunnyVideoId, authorName, authorEmail } = body;
+    const body = await req.json();
+    const { title, description, bunnyVideoId, youtubeUrl, authorName, authorEmail } = body;
 
-    // Validate cơ bản
-    if (!title || !bunnyVideoId || !authorName) {
-      return NextResponse.json({ message: 'Missing required information' }, { status: 400 });
+    // --- LOGIC VALIDATION CŨ (BỊ LỖI) ---
+    // if (!title || !bunnyVideoId || !authorName || !authorEmail) { ... }
+
+    // --- LOGIC VALIDATION MỚI (ĐÃ FIX) ---
+    // Yêu cầu: Phải có Title, Tên, Email VÀ (phải có BunnyID HOẶC YoutubeURL)
+    const hasVideoSource = bunnyVideoId || youtubeUrl;
+
+    if (!title || !authorName || !authorEmail || !hasVideoSource) {
+      console.error("Validation failed:", { title, authorName, hasVideoSource });
+      return NextResponse.json(
+        { message: "Missing required information (Title, Author, or Video Source)" },
+        { status: 400 } // Nên trả về 400 (Bad Request) thay vì 500
+      );
     }
 
-    // Ghi vào Sanity
+    // Tạo document trong Sanity
     const result = await writeClient.create({
-      _type: 'submission', // Tên schema bạn vừa tạo
+      _type: 'submission', // Đảm bảo tên schema đúng là 'submission'
       title,
-      description,
-      bunnyVideoId,
+      description: description || '',
+      // Lưu nguồn video tương ứng
+      bunnyVideoId: bunnyVideoId || undefined, 
+      youtubeUrl: youtubeUrl || undefined,
+      
       authorName,
       authorEmail,
-      youtubeUrl
+      status: 'pending', // Trạng thái chờ duyệt
+      submittedAt: new Date().toISOString(),
     });
 
-    return NextResponse.json({ message: 'Success', id: result._id }, { status: 201 });
+    return NextResponse.json({ message: "Success", id: result._id }, { status: 200 });
 
-  } catch (error: any) {
-    console.error("Submission Error:", error);
-    return NextResponse.json({ message: 'Submission Error' }, { status: 500 });
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error", error: String(error) },
+      { status: 500 }
+    );
   }
 }

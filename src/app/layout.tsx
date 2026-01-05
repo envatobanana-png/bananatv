@@ -17,8 +17,8 @@ const jetbrains = JetBrains_Mono({
 
 const oswald = Oswald({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-oswald' });
 export const metadata: Metadata = {
-  title: "MOUSE FARM ARCHIVE | ORIGINAL SOURCE",
-  description: "Official Original Video Archive. Content ID Protection & Source Storage. Unauthorized use is prohibited.",
+  title: "BANANA PLANET | Official Original Video Archive",
+  description: "Explore stunning travel videos from around the world on Banana Planet. Upload your own footage and get featured!",
   icons:"icon.png"
 };
 

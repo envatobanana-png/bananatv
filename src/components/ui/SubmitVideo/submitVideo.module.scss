@@ -1,163 +1,264 @@
-/* src/app/contact/contact.module.scss */
+/* src/components/home/submit-form.module.scss */
 
-$bg-color: #000000;
-$text-white: #ffffff;
-$text-muted: #71717a; // zinc-500
-$border-color: #27272a; // zinc-800
-$accent-color: #3bbbf5; // orange-600
-$input-bg: #09090b; // zinc-950
+// --- BANANA THEME VARIABLES ---
+$bg-dark: #0f172a;       // Slate-900
+$bg-card: #1e293b;       // Slate-800
+$accent-yellow: #facc15; // Yellow-400 (Màu chính)
+$accent-green: #4ade80;  // Green-400 (Màu thành công)
+$accent-red: #ef4444;    // Red-500 (Màu lỗi/Youtube)
+$text-light: #f8fafc;
+$text-dim: #94a3b8;
 
 .container {
-  min-height: 100vh;
-  background-color: $bg-color;
-  color: $text-white;
-  padding: 4rem 1.5rem;
-  font-family: sans-serif;
-}
+  // Nền style bản đồ địa hình mờ
+  background-color: $bg-card;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg"); // Hoặc texture topo nhẹ
+  background-blend-mode: overlay;
+  
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px; // Bo góc lớn
+  padding: 3rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
 
-.wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4rem;
-
-  @media (min-width: 1024px) {
-    grid-template-columns: 1fr 1.5fr; /* Cột trái nhỏ hơn cột phải */
-    gap: 6rem;
+  // Trang trí lá cây mờ ở góc (Optional)
+  &::before {
+    content: '🌿';
+    position: absolute;
+    top: -20px; left: -20px;
+    font-size: 5rem;
+    opacity: 0.1;
+    transform: rotate(-20deg);
   }
 }
 
-/* --- LEFT COLUMN: INFO --- */
-.infoColumn {
-  .heading {
-    font-size: 3rem;
+/* --- HEADER --- */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  h2 {
+    font-size: 2.5rem;
     font-weight: 900;
+    color: $text-light;
     text-transform: uppercase;
-    line-height: 0.9;
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
 
     span {
-      color: $text-muted;
-    }
-  }
-
-  .description {
-    color: $text-muted;
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-  }
-
-  .statsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid $border-color;
-
-    .statItem {
-      h4 {
-        font-size: 2rem;
-        font-weight: 800;
-        color: $text-white;
-      }
-      p {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: $text-muted;
-        font-weight: 700;
+      color: $accent-yellow;
+      position: relative;
+      display: inline-block;
+      
+      // Gạch chân kiểu bút dạ quang
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 5px; left: 0; width: 100%; height: 8px;
+        background: rgba($accent-yellow, 0.3);
+        z-index: -1;
+        transform: rotate(-2deg);
       }
     }
   }
 
-  .contactDetails {
-    h5 {
-      font-size: 0.875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: $text-muted;
-      margin-bottom: 1rem;
-    }
-
-    a {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: $text-white;
-      text-decoration: none;
-      margin-bottom: 0.5rem;
-      transition: color 0.2s;
-
-      &:hover {
-        color: $accent-color;
-      }
-    }
+  p {
+    font-size: 1.1rem;
+    color: $text-dim;
+    font-weight: 600;
   }
 }
 
-/* --- RIGHT COLUMN: FORM --- */
-.formColumn {
-  background-color: #09090b; // Nền hơi xám nhẹ để tách biệt
-  padding: 2.5rem;
-  border-radius: 24px;
-  border: 1px solid $border-color;
+/* --- FORM --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-  .formGroup {
-    margin-bottom: 1.5rem;
+/* --- TABS CHUYỂN ĐỔI (Dạng viên thuốc) --- */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(0,0,0,0.2);
+  padding: 0.5rem;
+  border-radius: 50px;
+  width: fit-content;
+  margin: 0 auto 2rem auto;
 
-    label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: $text-muted;
-      margin-bottom: 0.75rem;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      background-color: #000;
-      border: 1px solid $border-color;
-      color: $text-white;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.2s;
-
-      &:focus {
-        border-color: $accent-color;
-      }
-    }
-
-    textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-  }
-
-  .submitBtn {
-    width: 100%;
-    background-color: $text-white;
-    color: $bg-color;
+  .tabBtn {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 1.25rem;
-    border-radius: 99px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     cursor: pointer;
-    transition: all 0.3s;
+    color: $text-dim;
 
-    &:hover {
-      background-color: $accent-color;
-      color: $text-white;
+    &:hover { color: $text-light; }
+
+    &.active {
+      background-color: $accent-yellow;
+      color: $bg-dark; // Chữ tối trên nền vàng
+      box-shadow: 0 4px 15px rgba($accent-yellow, 0.4);
+    }
+    
+    // Youtube active thì màu đỏ
+    &.youtubeActive {
+        background-color: $accent-red;
+        color: white;
+        box-shadow: 0 4px 15px rgba($accent-red, 0.4);
     }
   }
 }
+
+/* --- UPLOAD AREA (Cửa sổ thiên nhiên) --- */
+.uploadArea {
+  position: relative;
+  border: 3px dashed rgba($accent-yellow, 0.3); // Viền nét đứt màu vàng nhạt
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  background: radial-gradient(circle at center, rgba($accent-yellow, 0.05) 0%, transparent 70%);
+  transition: all 0.3s;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  &:hover {
+    border-color: $accent-yellow;
+    background: rgba($accent-yellow, 0.1);
+    .icon { transform: scale(1.1) rotate(-5deg); }
+  }
+
+  /* Input file ẩn */
+  input[type="file"] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; z-index: 10;
+    &:disabled { cursor: not-allowed; }
+  }
+
+  /* Trạng thái mặc định */
+  .defaultState {
+    .icon {
+      font-size: 4rem; 
+      color: $accent-yellow; 
+      margin-bottom: 1rem;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+    .ctaText {
+      font-size: 1.25rem; font-weight: 800; color: $text-light;
+      margin-bottom: 0.5rem;
+    }
+    .subText { font-size: 0.9rem; color: $accent-yellow; font-weight: 700; }
+  }
+
+  /* Trạng thái Loading (Thanh loading xanh lá) */
+  .loadingState {
+    color: $accent-green;
+    width: 80%;
+    .spinner { font-size: 2.5rem; margin-bottom: 1rem; animation: spin 1s linear infinite; }
+    span { font-weight: 700; letter-spacing: 1px; }
+    
+    .progressContainer {
+       width: 100%; height: 8px;
+       background-color: rgba(255,255,255,0.1);
+       border-radius: 4px; margin-top: 1rem; overflow: hidden;
+       .progressBar {
+          height: 100%; background-color: $accent-green; // Màu xanh lá
+          transition: width 0.3s ease;
+          box-shadow: 0 0 10px $accent-green;
+       }
+    }
+  }
+
+  /* Trạng thái Success */
+  .successState {
+    color: $accent-green;
+    z-index: 20;
+    .checkIcon { font-size: 4rem; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px $accent-green); }
+    .successText { font-weight: 900; font-size: 1.2rem; text-transform: uppercase; }
+    .fileName { font-family: monospace; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; margin-top: 0.5rem; font-size: 0.8rem;}
+    .deleteBtn {
+      margin-top: 1rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba($accent-red, 0.1);
+      color: $accent-red; font-weight: 700; font-size: 0.8rem;
+      border: none; cursor: pointer; transition: all 0.2s;
+      &:hover { background: $accent-red; color: white; }
+    }
+  }
+  
+  /* Youtube Input Area */
+  .youtubeInputWrapper {
+      width: 100%; z-index: 20;
+      .ytIcon { font-size: 4rem; color: $accent-red; margin-bottom: 1.5rem; }
+      input {
+          width: 90%; max-width: 500px;
+          background-color: rgba(0,0,0,0.3);
+          border: 2px solid rgba($accent-red, 0.3);
+          padding: 1rem; color: $text-light; text-align: center;
+          border-radius: 12px; outline: none; font-size: 1.1rem;
+          transition: all 0.3s;
+          &:focus { border-color: $accent-red; box-shadow: 0 0 15px rgba($accent-red, 0.3); }
+      }
+  }
+}
+
+/* --- INPUT FIELDS --- */
+.grid {
+  display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+  @media (min-width: 768px) { grid-template-columns: 1fr 1fr; }
+}
+
+.field {
+  label {
+    display: block; font-size: 0.85rem; font-weight: 800; color: $text-dim;
+    text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;
+  }
+  input, textarea {
+    width: 100%; background-color: rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px; // Bo tròn
+    padding: 1rem; color: $text-light; font-size: 1rem; outline: none;
+    transition: all 0.3s;
+    &:focus { border-color: $accent-yellow; background: rgba(0,0,0,0.4); }
+  }
+  textarea { resize: none; min-height: 100px; }
+}
+
+/* --- SUBMIT BUTTON --- */
+.submitBtn {
+  width: 100%;
+  background-color: $accent-yellow;
+  color: $bg-dark; // Chữ tối
+  font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+  padding: 1.2rem; border-radius: 16px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.1rem;
+
+  &:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 25px rgba($accent-yellow, 0.4);
+    background-color: lighten($accent-yellow, 5%);
+  }
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+}
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
