@@ -43,7 +43,7 @@ export default function Footer() {
           </div>
           {/* Socials */}
           <div className={styles.socials}>
-            <a href="https://www.youtube.com/@mousefarm" className={styles.youtube} aria-label="YouTube"><FaYoutube /></a>
+            <a href="https://www.youtube.com/@BananaPlanetTV" className={styles.youtube} aria-label="YouTube"><FaYoutube /></a>
             <a href="#" className={styles.facebook} aria-label="Facebook"><FaFacebookF /></a>
             {/* <a href="#" className={styles.instagram} aria-label="Instagram"><FaInstagram /></a>
             <a href="#" className={styles.twitter} aria-label="Twitter"><FaTwitter /></a> */}
